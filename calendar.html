@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: center;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .today {
+      background-color: #ffff66;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calendar</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+      </tr>
+    </thead>
+    <tbody id="calendar-body">
+      <!-- Calendar dates will be populated here -->
+    </tbody>
+  </table>
+
+  <script>
+    function generateCalendar(year, month) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const lastDayIndex = new Date(year, month, daysInMonth).getDay();
+      const prevMonthDays = new Date(year, month, 0).getDate();
+
+      const calendarBody = document.getElementById('calendar-body');
+      calendarBody.innerHTML = '';
+
+      let date = 1;
+      for (let i = 0; i < 6; i++) {
+        const row = document.createElement('tr');
+        for (let j = 0; j < 7; j++) {
+          const cell = document.createElement('td');
+          if (i === 0 && j < firstDayIndex) {
+            cell.textContent = prevMonthDays - firstDayIndex + j + 1;
+            cell.classList.add('inactive');
+          } else if (date > daysInMonth) {
+            cell.textContent = date - daysInMonth;
+            cell.classList.add('inactive');
+            date++;
+          } else {
+            cell.textContent = date;
+            if (date === new Date().getDate() && year === new Date().getFullYear() && month === new Date().getMonth()) {
+              cell.classList.add('today');
+            }
+            date++;
+          }
+          row.appendChild(cell);
+        }
+        calendarBody.appendChild(row);
+      }
+    }
+
+    // Display current month by default
+    const currentDate = new Date();
+    generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+  </script>
+</body>
+</html>
