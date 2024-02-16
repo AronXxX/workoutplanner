@@ -24,12 +24,13 @@
       background-color: #f2f2f2;
     }
     .today {
-      background-color: #ffff66;
+      border: 2px solid red;
     }
-    input[type="checkbox"] {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
+    .selected {
+      background-color: #99ff99; /* Change this to the color you prefer for selected days */
+    }
+    .inactive {
+      color: #aaaaaa; /* Adjust this color for inactive days if needed */
     }
   </style>
 </head>
@@ -61,66 +62,67 @@
     let currentYear, currentMonth;
 
     function generateCalendar(year, month) {
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const firstDayIndex = new Date(year, month, 1).getDay();
-      const lastDayIndex = new Date(year, month, daysInMonth).getDay();
-      const prevMonthDays = new Date(year, month, 0).getDate();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const lastDayIndex = new Date(year, month, daysInMonth).getDay();
+        const prevMonthDays = new Date(year, month, 0).getDate();
 
-      const calendarBody = document.getElementById('calendar-body');
-      calendarBody.innerHTML = '';
+        const calendarBody = document.getElementById('calendar-body');
+        calendarBody.innerHTML = '';
 
-      let date = 1;
-      for (let i = 0; i < 6; i++) {
-        const row = document.createElement('tr');
-        for (let j = 0; j < 7; j++) {
-          const cell = document.createElement('td');
-          if (i === 0 && j < firstDayIndex) {
-            cell.textContent = prevMonthDays - firstDayIndex + j + 1;
-            cell.classList.add('inactive');
-          } else if (date > daysInMonth) {
-            cell.textContent = date - daysInMonth;
-            cell.classList.add('inactive');
-            date++;
-          } else {
-            const day = date;
-            cell.textContent = day;
-            if (day === new Date().getDate() && year === new Date().getFullYear() && month === new Date().getMonth()) {
-              cell.classList.add('today');
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement('tr');
+            for (let j = 0; j < 7; j++) {
+                const cell = document.createElement('td');
+                if (i === 0 && j < firstDayIndex) {
+                    cell.textContent = prevMonthDays - firstDayIndex + j + 1;
+                    cell.classList.add('inactive');
+                } else if (date > daysInMonth) {
+                    cell.textContent = date - daysInMonth;
+                    cell.classList.add('inactive');
+                    date++;
+                } else {
+                    const day = date;
+                    cell.textContent = day;
+                    if (day === new Date().getDate() && year === new Date().getFullYear() && month === new Date().getMonth()) {
+                        cell.classList.add('today');
+                    }
+                    cell.addEventListener('click', function() {
+                        cell.classList.toggle('selected');
+                    });
+                    date++;
+                }
+                row.appendChild(cell);
             }
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = `checkbox-${year}-${month + 1}-${day}`;
-            checkbox.dataset.date = `${year}-${month + 1}-${day}`; // Store the date in dataset for future reference
-            cell.appendChild(checkbox);
-            date++;
-          }
-          row.appendChild(cell);
+            calendarBody.appendChild(row);
         }
-        calendarBody.appendChild(row);
-      }
 
-      // Update current month display
-      document.getElementById('currentMonth').textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        // Update current month display
+        document.getElementById('currentMonth').textContent = new Date(year, month).toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric'
+        });
     }
 
     function previousMonth() {
-      if (currentMonth === 0) {
-        currentYear--;
-        currentMonth = 11;
-      } else {
-        currentMonth--;
-      }
-      generateCalendar(currentYear, currentMonth);
+        if (currentMonth === 0) {
+            currentYear--;
+            currentMonth = 11;
+        } else {
+            currentMonth--;
+        }
+        generateCalendar(currentYear, currentMonth);
     }
 
     function nextMonth() {
-      if (currentMonth === 11) {
-        currentYear++;
-        currentMonth = 0;
-      } else {
-        currentMonth++;
-      }
-      generateCalendar(currentYear, currentMonth);
+        if (currentMonth === 11) {
+            currentYear++;
+            currentMonth = 0;
+        } else {
+            currentMonth++;
+        }
+        generateCalendar(currentYear, currentMonth);
     }
 
     // Display current month by default
