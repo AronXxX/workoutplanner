@@ -18,6 +18,7 @@
       border: 1px solid #dddddd;
       text-align: center;
       padding: 8px;
+      position: relative;
     }
     th {
       background-color: #f2f2f2;
@@ -25,10 +26,20 @@
     .today {
       background-color: #ffff66;
     }
+    input[type="checkbox"] {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+    }
   </style>
 </head>
 <body>
   <h1>Calendar</h1>
+  <div>
+    <button onclick="previousMonth()">Previous</button>
+    <span id="currentMonth"></span>
+    <button onclick="nextMonth()">Next</button>
+  </div>
   <table>
     <thead>
       <tr>
@@ -47,6 +58,8 @@
   </table>
 
   <script>
+    let currentYear, currentMonth;
+
     function generateCalendar(year, month) {
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const firstDayIndex = new Date(year, month, 1).getDay();
@@ -69,21 +82,52 @@
             cell.classList.add('inactive');
             date++;
           } else {
-            cell.textContent = date;
-            if (date === new Date().getDate() && year === new Date().getFullYear() && month === new Date().getMonth()) {
+            const day = date;
+            cell.textContent = day;
+            if (day === new Date().getDate() && year === new Date().getFullYear() && month === new Date().getMonth()) {
               cell.classList.add('today');
             }
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `checkbox-${year}-${month + 1}-${day}`;
+            checkbox.dataset.date = `${year}-${month + 1}-${day}`; // Store the date in dataset for future reference
+            cell.appendChild(checkbox);
             date++;
           }
           row.appendChild(cell);
         }
         calendarBody.appendChild(row);
       }
+
+      // Update current month display
+      document.getElementById('currentMonth').textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    function previousMonth() {
+      if (currentMonth === 0) {
+        currentYear--;
+        currentMonth = 11;
+      } else {
+        currentMonth--;
+      }
+      generateCalendar(currentYear, currentMonth);
+    }
+
+    function nextMonth() {
+      if (currentMonth === 11) {
+        currentYear++;
+        currentMonth = 0;
+      } else {
+        currentMonth++;
+      }
+      generateCalendar(currentYear, currentMonth);
     }
 
     // Display current month by default
     const currentDate = new Date();
-    generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    currentYear = currentDate.getFullYear();
+    currentMonth = currentDate.getMonth();
+    generateCalendar(currentYear, currentMonth);
   </script>
 </body>
 </html>
