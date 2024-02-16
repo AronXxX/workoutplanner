@@ -5,11 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Display Date and Day</title>
 <style>
-  body {
-    font-size: 24px; /* Adjust the font size as needed */
-    font-weight: 900;
+  #dateAndText {
+    align-items: center;
     text-align: center;
-    padding-top: 1%;
+    font-size: 200%;
   }
 </style>
 <script>
@@ -33,7 +32,7 @@
     }
 
     // Display the date and text on the webpage
-    document.getElementById('dateAndText').innerHTML = 'Ma ' + currentDay + ' van , ' + currentDate.toLocaleDateString() + ' Mai program: ' + textToShow;
+    document.getElementById('dateAndText').innerHTML = 'Ma ' + currentDay + ' van , ' + currentDate.toLocaleDateString() + '<br>Mai program:<br>' + textToShow;
   }
 </script>
 </head>
