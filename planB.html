@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    .exercise {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+    }
+    .exercise label {
+        font-weight: bold;
+        color: #555;
+    }
+    .progress-container {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+    .progress-label {
+        margin-right: 10px;
+        color: #777;
+    }
+    progress {
+        width: 70%;
+        height: 20px;
+        border-radius: 10px;
+    }
+    progress::-webkit-progress-bar {
+        background-color: #eee;
+        border-radius: 10px;
+    }
+    progress::-webkit-progress-value {
+        background-color: #6fcf97;
+        border-radius: 10px;
+    }
+    progress::-moz-progress-bar {
+        background-color: #6fcf97;
+        border-radius: 10px;
+    }
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
+        color: #fff;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    .reps {
+        font-size: 16px;
+        margin-left: 5px;
+        color: #333;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="exercisesContainer">
+        <!-- Exercises will be dynamically generated here -->
+    </div>
+</div>
+
+<script>
+    // Array containing exercise data
+    let exercises = [
+        { id: 'situps', label: 'Situps 10x10', move: 10, goal: 100 },
+        { id: 'legup', label: 'Legups 5x10', move: 10, goal: 50 },
+        // Add more exercises here if needed
+    ];
+
+    // Function to generate exercise HTML
+    function generateExerciseHTML(exercise) {
+        return `
+        <div class="exercise" id="${exercise.id}" data-move="${exercise.move}" data-goal="${exercise.goal}">
+            <label for="${exercise.id}-reps">${exercise.label} Goal: ${exercise.goal}</label>
+            <div class="progress-container">
+                <span class="progress-label">Reps:</span>
+                <progress id="${exercise.id}-progress" max="${exercise.goal}" value="0"></progress>
+                <span id="${exercise.id}-reps" class="reps">0</span>
+            </div>
+            <div class="controls">
+                <button onclick="decrementReps('${exercise.id}')">-</button>
+                <button onclick="incrementReps('${exercise.id}')">+</button>
+            </div>
+        </div>
+        `;
+    }
+
+    // Function to save the reps to localStorage
+    function saveReps(exerciseId, reps) {
+        localStorage.setItem(exerciseId, reps);
+    }
+
+    // Function to load the reps from localStorage
+    function loadReps(exerciseId) {
+        return localStorage.getItem(exerciseId) || 0;
+    }
+
+    // Function to update the progress bar
+    function updateProgressBar(exerciseId) {
+        const reps = parseInt(loadReps(exerciseId));
+        const progressBar = document.getElementById(exerciseId + '-progress');
+        const repsDisplay = document.getElementById(exerciseId + '-reps');
+        progressBar.value = reps;
+        repsDisplay.textContent = reps;
+    }
+
+    // Function to increment reps
+    function incrementReps(exerciseId) {
+        let reps = parseInt(loadReps(exerciseId));
+        const move = parseInt(document.getElementById(exerciseId).getAttribute('data-move'));
+        const goal = parseInt(document.getElementById(exerciseId).getAttribute('data-goal'));
+        reps += move;
+        if (reps > goal) {
+            reps = goal;
+        }
+        saveReps(exerciseId, reps);
+        updateProgressBar(exerciseId);
+    }
+
+    // Function to decrement reps
+    function decrementReps(exerciseId) {
+        let reps = parseInt(loadReps(exerciseId));
+        const move = parseInt(document.getElementById(exerciseId).getAttribute('data-move'));
+        if (reps >= move) {
+            reps -= move;
+        } else {
+            reps = 0;
+        }
+        saveReps(exerciseId, reps);
+        updateProgressBar(exerciseId);
+    }
+
+    // Initialize exercises
+    function initializeExercises() {
+        const exercisesContainer = document.getElementById('exercisesContainer');
+        exercisesContainer.innerHTML = ''; // Clear previous exercises
+        exercises.forEach(exercise => {
+            exercisesContainer.innerHTML += generateExerciseHTML(exercise);
+            updateProgressBar(exercise.id); // Move this line here to ensure the progress bar is updated after the HTML is appended
+        });
+    }
+
+    initializeExercises();
+</script>
+</body>
+</html>
